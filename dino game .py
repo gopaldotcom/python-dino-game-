@@ -199,3 +199,60 @@ def main():
     obstacles = []
     death_count = 0
     pause = False
+
+    def score():
+        global points, game_speed
+        points += 1
+        if points % 100 == 0:
+            game_speed += 1
+        current_time = datetime.datetime.now().hour
+        with open("score.txt", "r") as f:
+            score_ints = [int(x) for x in f.read().split()]  
+            highscore = max(score_ints)
+            if points > highscore:
+                highscore=points 
+            text = font.render("High Score: "+ str(highscore) + "  Points: " + str(points), True, FONT_COLOR)
+        textRect = text.get_rect()
+        textRect.center = (900, 40)
+        SCREEN.blit(text, textRect)
+
+    def background():
+        global x_pos_bg, y_pos_bg
+        image_width = BG.get_width()
+        SCREEN.blit(BG, (x_pos_bg, y_pos_bg))
+        SCREEN.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+        if x_pos_bg <= -image_width:
+            SCREEN.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+            x_pos_bg = 0
+        x_pos_bg -= game_speed
+
+    def unpause():
+        nonlocal pause, run
+        pause = False
+        run = True
+
+    def paused():
+        nonlocal pause
+        pause = True
+        font = pygame.font.Font("freesansbold.ttf", 30)
+        text = font.render("Game Paused, Press 'u' to Unpause", True, FONT_COLOR)
+        textRect = text.get_rect()
+        textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT  // 3)
+        SCREEN.blit(text, textRect)
+        pygame.display.update()
+
+        while pause:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_u:
+                    unpause()
+
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                run = False
+                paused()
