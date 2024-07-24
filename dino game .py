@@ -256,3 +256,54 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 run = False
                 paused()
+
+        current_time = datetime.datetime.now().hour
+        if 7 < current_time < 19:
+            SCREEN.fill((255, 255, 255))
+        else:
+            SCREEN.fill((0, 0, 0))
+        userInput = pygame.key.get_pressed()
+
+        player.draw(SCREEN)
+        player.update(userInput)
+
+        if len(obstacles) == 0:
+            if random.randint(0, 2) == 0:
+                obstacles.append(SmallCactus(SMALL_CACTUS))
+            elif random.randint(0, 2) == 1:
+                obstacles.append(LargeCactus(LARGE_CACTUS))
+            elif random.randint(0, 2) == 2:
+                obstacles.append(Bird(BIRD))
+
+        for obstacle in obstacles:
+            obstacle.draw(SCREEN)
+            obstacle.update()
+            if player.dino_rect.colliderect(obstacle.rect):
+                pygame.time.delay(2000)
+                death_count += 1
+                menu(death_count)
+
+        background()
+
+        cloud.draw(SCREEN)
+        cloud.update()
+
+        score()
+
+        clock.tick(30)
+        pygame.display.update()
+
+
+def menu(death_count):
+    global points
+    global FONT_COLOR
+    run = True
+    while run:
+        current_time = datetime.datetime.now().hour
+        if 7 < current_time < 19:
+            FONT_COLOR=(0,0,0)
+            SCREEN.fill((255, 255, 255))
+        else:
+            FONT_COLOR=(255,255,255)
+            SCREEN.fill((128, 128, 128))
+        font = pygame.font.Font("freesansbold.ttf", 30)
