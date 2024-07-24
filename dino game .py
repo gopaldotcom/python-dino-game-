@@ -160,3 +160,42 @@ class SmallCactus(Obstacle):
         self.type = random.randint(0, 2)
         super().__init__(image, self.type)
         self.rect.y = 325
+
+
+class LargeCactus(Obstacle):
+    def __init__(self, image):
+        self.type = random.randint(0, 2)
+        super().__init__(image, self.type)
+        self.rect.y = 300
+
+
+class Bird(Obstacle):
+    BIRD_HEIGHTS = [250, 290, 320]
+
+    def __init__(self, image):
+        self.type = 0
+        super().__init__(image, self.type)
+        self.rect.y = random.choice(self.BIRD_HEIGHTS)
+        self.index = 0
+
+    def draw(self, SCREEN):
+        if self.index >= 9:
+            self.index = 0
+        SCREEN.blit(self.image[self.index // 5], self.rect)
+        self.index += 1
+
+
+def main():
+    global game_speed, x_pos_bg, y_pos_bg, points, obstacles
+    run = True
+    clock = pygame.time.Clock()
+    player = Dinosaur()
+    cloud = Cloud()
+    game_speed = 20
+    x_pos_bg = 0
+    y_pos_bg = 380
+    points = 0
+    font = pygame.font.Font("freesansbold.ttf", 20)
+    obstacles = []
+    death_count = 0
+    pause = False
